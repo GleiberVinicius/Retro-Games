@@ -1,0 +1,7 @@
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router';
+import { jogoApi } from '../api/servicos';
+import { obterMensagemErro } from '../api/erros';
+import { formatarPreco, formatarDataHora } from '../lib/formato';
+import { Carregando, MensagemErro } from '../components/MensagensEstado';
+export default function DetalheJogo() { const { id } = useParams(); const [jogo, setJogo] = useState(null); const [erro, setErro] = useState(''); useEffect(() => { jogoApi.obter(id).then(setJogo).catch((e) => setErro(obterMensagemErro(e))); }, [id]); if (erro) return <MensagemErro mensagem={erro} />; if (!jogo) return <Carregando />; return <><Link to="/" className="text-decoration-none">← Voltar ao catálogo</Link><article className="card border-0 shadow-sm mt-3"><div className="card-body p-4 p-lg-5"><div className="d-flex gap-2 mb-3"><span className="badge etiqueta">{jogo.plataforma}</span><span className="badge text-bg-light">{jogo.condicao}</span></div><h1 className="display-5 fw-bold">{jogo.nome}</h1><p className="text-secondary">{jogo.anoLancamento} · {jogo.generos.map((g) => g.nome).join(' / ')}</p><p className="my-4">{jogo.descricao || 'Um clássico para sua coleção.'}</p><div className="preco mb-2">{formatarPreco(jogo.preco)}</div><p>{jogo.estoque ? `${jogo.estoque} unidade(s) em estoque` : 'Esgotado'}</p><small className="text-secondary">Cadastro: {formatarDataHora(jogo.dataCadastro)}</small></div></article></>; }

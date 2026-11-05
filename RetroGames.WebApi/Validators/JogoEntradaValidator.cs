@@ -1,0 +1,5 @@
+using FluentValidation;
+using RetroGames.WebApi.ApiModels.ApiModels;
+namespace RetroGames.WebApi.Validators;
+public sealed class JogoEntradaValidator:AbstractValidator<JogoEntradaApiModel>
+{ public JogoEntradaValidator(){RuleFor(x=>x.Nome).NotEmpty().WithMessage("Informe o nome do jogo.").MaximumLength(150);RuleFor(x=>x.Descricao).MaximumLength(5000);RuleFor(x=>x.AnoLancamento).InclusiveBetween((short)1970,(short)2100).WithMessage("Ano de lançamento deve estar entre 1970 e 2100.");RuleFor(x=>x.Preco).GreaterThan(0).WithMessage("O preço deve ser maior que zero.");RuleFor(x=>x.Estoque).GreaterThanOrEqualTo(0).WithMessage("O estoque não pode ser negativo.");RuleFor(x=>x.IdPlataforma).GreaterThan(0).WithMessage("Informe uma plataforma válida.");RuleFor(x=>x.IdCondicaoJogo).GreaterThan(0).WithMessage("Informe uma condição válida.");RuleFor(x=>x.IdsGeneros).NotEmpty().WithMessage("Informe ao menos um gênero.");RuleFor(x=>x.IdsGeneros).Must(x=>x.Distinct().Count()==x.Count).WithMessage("Não repita gêneros.");} }

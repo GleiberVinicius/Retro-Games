@@ -1,0 +1,48 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetroGames.Model", "RetroGames.Model\RetroGames.Model.csproj", "{A611C4C1-4880-4D2A-98F2-9F544DBA1001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetroGames.Repository", "RetroGames.Repository\RetroGames.Repository.csproj", "{A611C4C1-4880-4D2A-98F2-9F544DBA1002}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetroGames.WebApi.ApiModels", "RetroGames.WebApi.ApiModels\RetroGames.WebApi.ApiModels.csproj", "{A611C4C1-4880-4D2A-98F2-9F544DBA1003}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetroGames.Services", "RetroGames.Services\RetroGames.Services.csproj", "{A611C4C1-4880-4D2A-98F2-9F544DBA1004}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetroGames.WebApi", "RetroGames.WebApi\RetroGames.WebApi.csproj", "{A611C4C1-4880-4D2A-98F2-9F544DBA1005}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetroGames.WebApi.UnitTests", "RetroGames.WebApi.UnitTests\RetroGames.WebApi.UnitTests.csproj", "{A611C4C1-4880-4D2A-98F2-9F544DBA1006}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1002}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1002}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1002}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1003}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1004}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1004}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1004}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1005}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1005}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1005}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1006}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1006}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1006}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A611C4C1-4880-4D2A-98F2-9F544DBA1006}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
