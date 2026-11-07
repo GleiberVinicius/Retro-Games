@@ -8,3 +8,4 @@ dist/
 *.suo
 secrets.json
 /*.pdf
+.env
