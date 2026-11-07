@@ -13,7 +13,7 @@ public sealed class JogoService(IRepositorioSet repositorios) : IJogoService
         if(idGenero.HasValue) ids=(await repositorios.JogosGeneros.ListarTodosAsync(ct)).Where(x=>x.IdGenero==idGenero.Value).Select(x=>x.IdJogo).Distinct().ToArray();
         var itens=await repositorios.Jogos.ListarAsync(busca,idPlataforma,incluirInativos,pagina,tamanhoPagina,ids,ct);
         var total=await repositorios.Jogos.ContarAsync(busca,idPlataforma,incluirInativos,ids,ct);
-        var plataformas=await repositorios.Plataformas.ListarAsync(ct); var condicoes=await repositorios.Condicoes.ListarAsync(ct); var generos=await repositorios.Generos.ListarAsync(ct); var relacoes=await repositorios.JogosGeneros.ListarTodosAsync(ct);
+        var plataformas=await repositorios.Plataformas.ListarAsync(ct); var condicoes=await repositorios.Condicoes.ListarAsync(ct); var generos=await repositorios.Generos.ListarAsync(ct); var relacoes=await repositorios.JogosGeneros.ListarPorJogosAsync(itens.Select(j=>j.Id).ToArray(),ct);
         var modelos=itens.Select(j=>Montar(j,plataformas,condicoes,generos,relacoes)).ToArray();
         return new(modelos,pagina,tamanhoPagina,total);
     }
@@ -21,7 +21,7 @@ public sealed class JogoService(IRepositorioSet repositorios) : IJogoService
     {
         var jogo=await repositorios.Jogos.ObterAsync(id,incluirInativo,ct)??throw BusinessErrors.JogoNaoEncontrado();
         var plataforma=await repositorios.Plataformas.ObterAsync(jogo.IdPlataforma,ct); var condicao=(await repositorios.Condicoes.ListarAsync(ct)).FirstOrDefault(x=>x.Id==jogo.IdCondicaoJogo);
-        var ligacoes=(await repositorios.JogosGeneros.ListarTodosAsync(ct)).Where(x=>x.IdJogo==id).Select(x=>x.IdGenero).ToArray(); var generos=await repositorios.Generos.ListarPorIdsAsync(ligacoes,ct);
+        var ligacoes=(await repositorios.JogosGeneros.ListarPorJogosAsync([id],ct)).Select(x=>x.IdGenero).ToArray(); var generos=await repositorios.Generos.ListarPorIdsAsync(ligacoes,ct);
         return new(jogo.Id,jogo.Nome,jogo.Descricao,jogo.AnoLancamento,jogo.Preco,jogo.Estoque,jogo.Ativo,jogo.DataCadastro,jogo.IdPlataforma,plataforma?.Nome??string.Empty,jogo.IdCondicaoJogo,condicao?.Descricao??string.Empty,generos);
     }
     public async Task<JogoDetalheServiceModel> InserirAsync(Jogo jogo,IReadOnlyCollection<int> idsGeneros,CancellationToken ct=default)
@@ -29,7 +29,7 @@ public sealed class JogoService(IRepositorioSet repositorios) : IJogoService
         await ValidarReferenciasAsync(jogo,idsGeneros,ct); jogo.Ativo=true;
         var opcoes=new TransactionOptions{IsolationLevel=IsolationLevel.ReadCommitted,Timeout=TransactionManager.DefaultTimeout};
         using(var escopo=new TransactionScope(TransactionScopeOption.Required,opcoes,TransactionScopeAsyncFlowOption.Enabled))
-        { jogo.Id=await repositorios.Jogos.InserirAsync(jogo,ct); await repositorios.JogosGeneros.SubstituirAsync(jogo.Id,idsGeneros,ct); escopo.Complete(); }
+        { jogo.Id=await repositorios.Jogos.InserirAsync(jogo,ct); await repositorios.JogosGeneros.InserirAsync(jogo.Id,idsGeneros,ct); escopo.Complete(); }
         return await ObterAsync(jogo.Id,true,ct);
     }
     public async Task AtualizarAsync(Jogo jogo,IReadOnlyCollection<int> idsGeneros,CancellationToken ct=default)
@@ -37,7 +37,7 @@ public sealed class JogoService(IRepositorioSet repositorios) : IJogoService
         if(await repositorios.Jogos.ObterAsync(jogo.Id,true,ct) is null)throw BusinessErrors.JogoNaoEncontrado(); await ValidarReferenciasAsync(jogo,idsGeneros,ct);
         var opcoes=new TransactionOptions{IsolationLevel=IsolationLevel.ReadCommitted,Timeout=TransactionManager.DefaultTimeout};
         using(var escopo=new TransactionScope(TransactionScopeOption.Required,opcoes,TransactionScopeAsyncFlowOption.Enabled))
-        { await repositorios.Jogos.AtualizarAsync(jogo,ct); await repositorios.JogosGeneros.SubstituirAsync(jogo.Id,idsGeneros,ct); escopo.Complete(); }
+        { await repositorios.Jogos.AtualizarAsync(jogo,ct); await repositorios.JogosGeneros.RemoverPorJogoAsync(jogo.Id,ct); await repositorios.JogosGeneros.InserirAsync(jogo.Id,idsGeneros,ct); escopo.Complete(); }
     }
     public async Task DesativarAsync(int id,CancellationToken ct=default){if(await repositorios.Jogos.ObterAsync(id,true,ct)is null)throw BusinessErrors.JogoNaoEncontrado();await repositorios.Jogos.DesativarAsync(id,ct);}
     private async Task ValidarReferenciasAsync(Jogo jogo,IReadOnlyCollection<int> ids,CancellationToken ct)

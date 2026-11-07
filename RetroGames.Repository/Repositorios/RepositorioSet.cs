@@ -273,23 +273,46 @@ internal sealed class JogoGeneroRepository(RepositoryConfig config)
         return itens;
     }
 
-    public async Task SubstituirAsync(int idJogo, IReadOnlyCollection<int> ids, CancellationToken ct = default)
+    public async Task<IReadOnlyList<JogoGenero>> ListarPorJogosAsync(IReadOnlyCollection<int> idsJogos, CancellationToken ct = default)
     {
-        await using (var cn = await AbrirConexaoAsync(ct))
-        await using (var cmd = CriarComando(cn, "DELETE FROM tb_jogo_genero WHERE co_jogo=@id"))
-        {
-            AdicionarParametro(cmd, "@id", idJogo);
-            await ExecutarGravacaoAsync(cmd, ct);
-        }
+        var ids = idsJogos.Distinct().ToArray();
+        if (ids.Length == 0) return [];
 
-        foreach (var id in ids)
+        await using var cn = await AbrirConexaoAsync(ct);
+        var parametros = ids.Select((_, indice) => $"@jogo{indice}");
+        var sql = "SELECT co_jogo,co_genero FROM tb_jogo_genero WHERE co_jogo IN (" + string.Join(",", parametros) + ")";
+        await using var cmd = CriarComando(cn, sql);
+        for (var indice = 0; indice < ids.Length; indice++)
+            AdicionarParametro(cmd, $"@jogo{indice}", ids[indice]);
+
+        await using var rd = await cmd.ExecuteReaderAsync(ct);
+        var itens = new List<JogoGenero>();
+        while (await rd.ReadAsync(ct)) itens.Add(new() { IdJogo = rd.GetInt32(0), IdGenero = rd.GetInt32(1) });
+        return itens;
+    }
+
+    public async Task InserirAsync(int idJogo, IReadOnlyCollection<int> idsGeneros, CancellationToken ct = default)
+    {
+        if (idsGeneros.Count == 0) return;
+
+        await using var cn = await AbrirConexaoAsync(ct);
+        var valores = Enumerable.Range(0, idsGeneros.Count).Select(indice => $"(@jogo,@genero{indice})");
+        await using var cmd = CriarComando(cn, "INSERT INTO tb_jogo_genero(co_jogo,co_genero) VALUES " + string.Join(",", valores));
+        AdicionarParametro(cmd, "@jogo", idJogo);
+        var indiceGenero = 0;
+        foreach (var idGenero in idsGeneros)
         {
-            await using var cn = await AbrirConexaoAsync(ct);
-            await using var cmd = CriarComando(cn, "INSERT INTO tb_jogo_genero(co_jogo,co_genero) VALUES(@jogo,@genero)");
-            AdicionarParametro(cmd, "@jogo", idJogo);
-            AdicionarParametro(cmd, "@genero", id);
-            await ExecutarGravacaoAsync(cmd, ct);
+            AdicionarParametro(cmd, $"@genero{indiceGenero++}", idGenero);
         }
+        await ExecutarGravacaoAsync(cmd, ct);
+    }
+
+    public async Task RemoverPorJogoAsync(int idJogo, CancellationToken ct = default)
+    {
+        await using var cn = await AbrirConexaoAsync(ct);
+        await using var cmd = CriarComando(cn, "DELETE FROM tb_jogo_genero WHERE co_jogo=@jogo");
+        AdicionarParametro(cmd, "@jogo", idJogo);
+        await ExecutarGravacaoAsync(cmd, ct);
     }
 }
 

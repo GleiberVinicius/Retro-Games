@@ -31,6 +31,12 @@ public interface IJogoRepository
 }
 public interface IGeneroRepository { Task<IReadOnlyList<Genero>> ListarAsync(CancellationToken ct = default); Task<IReadOnlyList<Genero>> ListarPorIdsAsync(IReadOnlyCollection<int> ids, CancellationToken ct = default); }
 public interface ICondicaoJogoRepository { Task<IReadOnlyList<CondicaoJogo>> ListarAsync(CancellationToken ct = default); Task<bool> ExisteAsync(int id, CancellationToken ct = default); }
-public interface IJogoGeneroRepository { Task SubstituirAsync(int idJogo, IReadOnlyCollection<int> idsGeneros, CancellationToken ct = default); Task<IReadOnlyList<JogoGenero>> ListarTodosAsync(CancellationToken ct = default); }
+public interface IJogoGeneroRepository
+{
+    Task<IReadOnlyList<JogoGenero>> ListarTodosAsync(CancellationToken ct = default);
+    Task<IReadOnlyList<JogoGenero>> ListarPorJogosAsync(IReadOnlyCollection<int> idsJogos, CancellationToken ct = default);
+    Task InserirAsync(int idJogo, IReadOnlyCollection<int> idsGeneros, CancellationToken ct = default);
+    Task RemoverPorJogoAsync(int idJogo, CancellationToken ct = default);
+}
 public interface IUsuarioRepository { Task<Usuario?> ObterPorEmailAsync(string email, CancellationToken ct = default); Task InserirAsync(Usuario usuario, CancellationToken ct = default); }
 public interface IPerfilRepository { Task<string?> ObterDescricaoAsync(int id, CancellationToken ct = default); }
