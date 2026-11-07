@@ -16,7 +16,7 @@ construtor.WebHost.UseUrls("http://localhost:5080");
 var connectionString = construtor.Configuration.GetConnectionString("Default");
 if (string.IsNullOrWhiteSpace(connectionString)) throw new InvalidOperationException("Configure ConnectionStrings:Default em user-secrets ou variável de ambiente.");
 
-construtor.Services.AddSingleton(new MySqlConexaoFactory(connectionString));
+construtor.Services.AddSingleton(new RepositoryConfig(connectionString));
 construtor.Services.AddScoped<IRepositorioSet, RepositorioSet>();
 construtor.Services.AddScoped<IPlataformaService, PlataformaService>();
 construtor.Services.AddScoped<IJogoService, JogoService>();
