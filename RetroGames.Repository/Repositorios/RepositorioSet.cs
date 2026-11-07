@@ -48,6 +48,14 @@ internal sealed class PlataformaRepository(RepositoryConfig config)
         return Convert.ToInt32(await cmd.ExecuteScalarAsync(ct)) > 0;
     }
 
+    public async Task<bool> PossuiJogosAsync(int idPlataforma, CancellationToken ct = default)
+    {
+        await using var cn = await AbrirConexaoAsync(ct);
+        await using var cmd = CriarComando(cn, "SELECT COUNT(*) FROM tb_jogo WHERE co_plataforma=@id");
+        AdicionarParametro(cmd, "@id", idPlataforma);
+        return Convert.ToInt32(await cmd.ExecuteScalarAsync(ct)) > 0;
+    }
+
     public async Task<int> InserirAsync(Plataforma item, CancellationToken ct = default)
     {
         await using var cn = await AbrirConexaoAsync(ct);
@@ -139,14 +147,6 @@ internal sealed class JogoRepository(RepositoryConfig config)
         AdicionarParametro(cmd, "@id", id);
         await using var rd = await cmd.ExecuteReaderAsync(ct);
         return await rd.ReadAsync(ct) ? Mapear(rd) : null;
-    }
-
-    public async Task<bool> ExisteNaPlataformaAsync(int idPlataforma, CancellationToken ct = default)
-    {
-        await using var cn = await AbrirConexaoAsync(ct);
-        await using var cmd = CriarComando(cn, "SELECT COUNT(*) FROM tb_jogo WHERE co_plataforma=@id");
-        AdicionarParametro(cmd, "@id", idPlataforma);
-        return Convert.ToInt32(await cmd.ExecuteScalarAsync(ct)) > 0;
     }
 
     public async Task<int> InserirAsync(Jogo jogo, CancellationToken ct = default)

@@ -24,7 +24,7 @@ public sealed class PlataformaService(IRepositorioSet repositorios) : IPlataform
     public async Task ExcluirAsync(int id,CancellationToken ct=default)
     {
         if(await repositorios.Plataformas.ObterAsync(id,ct) is null)throw BusinessErrors.PlataformaNaoEncontrada();
-        if(await repositorios.Jogos.ExisteNaPlataformaAsync(id,ct))throw BusinessErrors.PlataformaPossuiJogos();
+        if(await repositorios.Plataformas.PossuiJogosAsync(id,ct))throw BusinessErrors.PlataformaPossuiJogos();
         await repositorios.Plataformas.ExcluirAsync(id,ct);
     }
 }

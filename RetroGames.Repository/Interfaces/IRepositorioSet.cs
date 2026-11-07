@@ -15,6 +15,7 @@ public interface IPlataformaRepository
     Task<IReadOnlyList<Plataforma>> ListarAsync(CancellationToken ct = default);
     Task<Plataforma?> ObterAsync(int id, CancellationToken ct = default);
     Task<bool> ExisteNomeAsync(string nome, int? ignorarId = null, CancellationToken ct = default);
+    Task<bool> PossuiJogosAsync(int idPlataforma, CancellationToken ct = default);
     Task<int> InserirAsync(Plataforma item, CancellationToken ct = default);
     Task AtualizarAsync(Plataforma item, CancellationToken ct = default);
     Task ExcluirAsync(int id, CancellationToken ct = default);
@@ -24,7 +25,6 @@ public interface IJogoRepository
     Task<IReadOnlyList<Jogo>> ListarAsync(string? busca, int? idPlataforma, bool incluirInativos, int pagina, int tamanhoPagina, IReadOnlyCollection<int>? ids, CancellationToken ct = default);
     Task<int> ContarAsync(string? busca, int? idPlataforma, bool incluirInativos, IReadOnlyCollection<int>? ids, CancellationToken ct = default);
     Task<Jogo?> ObterAsync(int id, bool incluirInativo, CancellationToken ct = default);
-    Task<bool> ExisteNaPlataformaAsync(int idPlataforma, CancellationToken ct = default);
     Task<int> InserirAsync(Jogo item, CancellationToken ct = default);
     Task AtualizarAsync(Jogo item, CancellationToken ct = default);
     Task DesativarAsync(int id, CancellationToken ct = default);
