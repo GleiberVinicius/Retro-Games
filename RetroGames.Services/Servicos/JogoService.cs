@@ -26,6 +26,7 @@ public sealed class JogoService(IRepositorioSet repositorios) : IJogoService
     }
     public async Task<JogoDetalheServiceModel> InserirAsync(Jogo jogo,IReadOnlyCollection<int> idsGeneros,CancellationToken ct=default)
     {
+        jogo.Nome=jogo.Nome.Trim();
         await ValidarReferenciasAsync(jogo,idsGeneros,ct); jogo.Ativo=true;
         var opcoes=new TransactionOptions{IsolationLevel=IsolationLevel.ReadCommitted,Timeout=TransactionManager.DefaultTimeout};
         using(var escopo=new TransactionScope(TransactionScopeOption.Required,opcoes,TransactionScopeAsyncFlowOption.Enabled))
@@ -34,6 +35,7 @@ public sealed class JogoService(IRepositorioSet repositorios) : IJogoService
     }
     public async Task AtualizarAsync(Jogo jogo,IReadOnlyCollection<int> idsGeneros,CancellationToken ct=default)
     {
+        jogo.Nome=jogo.Nome.Trim();
         if(await repositorios.Jogos.ObterAsync(jogo.Id,true,ct) is null)throw BusinessErrors.JogoNaoEncontrado(); await ValidarReferenciasAsync(jogo,idsGeneros,ct);
         var opcoes=new TransactionOptions{IsolationLevel=IsolationLevel.ReadCommitted,Timeout=TransactionManager.DefaultTimeout};
         using(var escopo=new TransactionScope(TransactionScopeOption.Required,opcoes,TransactionScopeAsyncFlowOption.Enabled))
