@@ -9,7 +9,7 @@ public sealed record BusinessError(int Codigo, string Mensagem, int StatusHttp);
 /// <summary>Catálogo dos erros de negócio usados pelos Services.</summary>
 public static class BusinessErrors
 {
-    public static readonly BusinessError PLATAFORMA_NAO_ENCONTRADA = new(ResponseCodes.PLATAFORMA_NAO_ENCONTRADA.Code, ResponseCodes.PLATAFORMA_NAO_ENCONTRADA.DefaultMessage, StatusCodes.Status404NotFound);
+    public static readonly BusinessError PLATAFORMA_NAO_ENCONTRADA = new(100, "Plataforma não encontrada.", StatusCodes.Status404NotFound);
     public static readonly BusinessError PLATAFORMA_NOME_DUPLICADO = new(ResponseCodes.PLATAFORMA_NOME_DUPLICADO.Code, ResponseCodes.PLATAFORMA_NOME_DUPLICADO.DefaultMessage, StatusCodes.Status409Conflict);
     public static readonly BusinessError PLATAFORMA_POSSUI_JOGOS = new(ResponseCodes.PLATAFORMA_POSSUI_JOGOS.Code, ResponseCodes.PLATAFORMA_POSSUI_JOGOS.DefaultMessage, StatusCodes.Status409Conflict);
     public static readonly BusinessError JOGO_NAO_ENCONTRADO = new(ResponseCodes.JOGO_NAO_ENCONTRADO.Code, ResponseCodes.JOGO_NAO_ENCONTRADO.DefaultMessage, StatusCodes.Status404NotFound);
