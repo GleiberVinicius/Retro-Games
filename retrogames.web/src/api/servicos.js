@@ -14,7 +14,7 @@ export const plataformaApi = {
   excluir: (id) => requisitar({ method: 'delete', url: `/Plataforma/${id}` }),
 };
 export const generoApi = { listar: () => requisitar({ method: 'get', url: '/Genero' }) };
-export const tabelaTipoApi = { condicoesJogo: () => requisitar({ method: 'get', url: '/TabelaTipo/condicoes-jogo' }) };
+export const condicaoJogoApi = { listar: () => requisitar({ method: 'get', url: '/CondicaoJogo' }) };
 export const jogoApi = {
   listar: (params) => requisitar({ method: 'get', url: '/Jogo', params }),
   obter: (id) => requisitar({ method: 'get', url: `/Jogo/${id}` }),
