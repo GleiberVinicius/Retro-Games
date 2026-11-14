@@ -1,28 +1,21 @@
 using System.Text.Json.Serialization;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using RetroGames.Repository.Conexao;
-using RetroGames.Repository.Interfaces;
-using RetroGames.Repository.Repositorios;
 using RetroGames.Services.Interfaces;
-using RetroGames.Services.Servicos;
+using RetroGames.WebApi.Configuracao;
 using RetroGames.WebApi.ApiModels.ApiModels;
 using RetroGames.WebApi.Filters;
 using RetroGames.WebApi.Tratamento;
 using RetroGames.WebApi.Validators;
 
+DotNetEnv.Env.TraversePath().Load();
+
 var construtor = WebApplication.CreateBuilder(args);
-construtor.WebHost.UseUrls("http://localhost:5080");
 var connectionString = construtor.Configuration.GetConnectionString("Default");
 if (string.IsNullOrWhiteSpace(connectionString)) throw new InvalidOperationException("Configure ConnectionStrings:Default em user-secrets ou variável de ambiente.");
 
-construtor.Services.AddSingleton(new RepositoryConfig(connectionString));
-construtor.Services.AddScoped<IRepositorioSet, RepositorioSet>();
-construtor.Services.AddScoped<IPlataformaService, PlataformaService>();
-construtor.Services.AddScoped<IJogoService, JogoService>();
-construtor.Services.AddScoped<IGeneroService, GeneroService>();
-construtor.Services.AddScoped<ICondicaoJogoService, CondicaoJogoService>();
-construtor.Services.AddScoped<IAutenticacaoService, AutenticacaoService>();
+construtor.Services.AddRepositorios(connectionString);
+construtor.Services.AddServicosDeNegocio();
 construtor.Services.AddValidatorsFromAssemblyContaining<PlataformaEntradaValidator>();
 construtor.Services.AddScoped<ValidacaoFluentValidationFilter>();
 construtor.Services.AddControllers(opcoes => { opcoes.Filters.AddService<ValidacaoFluentValidationFilter>(); opcoes.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute()); });
