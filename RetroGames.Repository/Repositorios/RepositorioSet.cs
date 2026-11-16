@@ -161,7 +161,7 @@ internal sealed class JogoRepository(RepositoryConfig config)
     public async Task AtualizarAsync(Jogo jogo, CancellationToken ct = default)
     {
         await using var cn = await AbrirConexaoAsync(ct);
-        await using var cmd = CriarComando(cn, "UPDATE tb_jogo SET no_jogo=@nome,ds_jogo=@descricao,nu_ano_lancamento=@ano,vl_preco=@preco,qt_estoque=@estoque,co_plataforma=@plataforma,co_condicao_jogo=@condicao WHERE co_seq_jogo=@id");
+        await using var cmd = CriarComando(cn, "UPDATE tb_jogo SET no_jogo=@nome,ds_jogo=@descricao,nu_ano_lancamento=@ano,vl_preco=@preco,qt_estoque=@estoque,st_ativo=@ativo,co_plataforma=@plataforma,co_condicao_jogo=@condicao WHERE co_seq_jogo=@id");
         ParametrosJogo(cmd, jogo);
         AdicionarParametro(cmd, "@id", jogo.Id);
         await ExecutarGravacaoAsync(cmd, ct);
@@ -182,6 +182,7 @@ internal sealed class JogoRepository(RepositoryConfig config)
         AdicionarParametro(cmd, "@ano", jogo.AnoLancamento);
         AdicionarParametro(cmd, "@preco", jogo.Preco);
         AdicionarParametro(cmd, "@estoque", jogo.Estoque);
+        AdicionarParametro(cmd, "@ativo", jogo.Ativo);
         AdicionarParametro(cmd, "@plataforma", jogo.IdPlataforma);
         AdicionarParametro(cmd, "@condicao", jogo.IdCondicaoJogo);
     }

@@ -9,6 +9,44 @@ namespace RetroGames.WebApi.UnitTests.Mapeadores;
 public sealed class JogoMapperTests
 {
     [Fact]
+    public void ParaModel_DeInsercao_DeveMapearOsCamposDoJogo()
+    {
+        var modelo = new InserirJogoRequestApiModel
+        {
+            Nome = " Sonic ", Descricao = "O ouriço azul", AnoLancamento = 1991,
+            Preco = 45.50m, Estoque = 3, IdPlataforma = 2, IdCondicaoJogo = 4, IdsGeneros = [8, 9],
+        };
+
+        var jogo = modelo.ParaModel();
+
+        Assert.Equal(0, jogo.Id);
+        Assert.Equal("Sonic", jogo.Nome);
+        Assert.Equal("O ouriço azul", jogo.Descricao);
+        Assert.Equal((short)1991, jogo.AnoLancamento);
+        Assert.Equal(45.50m, jogo.Preco);
+        Assert.Equal(3, jogo.Estoque);
+        Assert.Equal(2, jogo.IdPlataforma);
+        Assert.Equal(4, jogo.IdCondicaoJogo);
+    }
+
+    [Fact]
+    public void ParaModel_DeAlteracao_DeveUsarIdDaRotaEAtivoDoCorpo()
+    {
+        var modelo = new AlterarJogoRequestApiModel
+        {
+            Nome = "Sonic 2", AnoLancamento = 1992, Preco = 55m, Estoque = 4,
+            IdPlataforma = 2, IdCondicaoJogo = 4, IdsGeneros = [9], Ativo = false,
+        };
+
+        var jogo = modelo.ParaModel(12);
+
+        Assert.Equal(12, jogo.Id);
+        Assert.Equal("Sonic 2", jogo.Nome);
+        Assert.False(jogo.Ativo);
+        Assert.Equal(9, modelo.IdsGeneros.Single());
+    }
+
+    [Fact]
     public void ParaResponse_DeveMontarItemDaListagemComNomesDosGeneros()
     {
         var jogo = CriarJogo();

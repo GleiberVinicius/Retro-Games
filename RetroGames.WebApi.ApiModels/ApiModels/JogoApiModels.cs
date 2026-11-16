@@ -38,7 +38,7 @@ public sealed record ListarPorIdJogoResponseApiModel(
 public sealed record GeneroApiModel(int Id, string Nome);
 public sealed record PaginaResponseApiModel<T>(IReadOnlyList<T> Itens, int Pagina, int TamanhoPagina, int TotalItens, int TotalPaginas);
 
-public sealed class JogoEntradaApiModel
+public sealed class InserirJogoRequestApiModel
 {
     public string Nome { get; set; } = string.Empty;
     public string? Descricao { get; set; }
@@ -48,4 +48,17 @@ public sealed class JogoEntradaApiModel
     public int IdPlataforma { get; set; }
     public int IdCondicaoJogo { get; set; }
     public List<int> IdsGeneros { get; set; } = [];
+}
+
+public sealed class AlterarJogoRequestApiModel
+{
+    public string Nome { get; set; } = string.Empty;
+    public string? Descricao { get; set; }
+    public short AnoLancamento { get; set; }
+    public decimal Preco { get; set; }
+    public int Estoque { get; set; }
+    public int IdPlataforma { get; set; }
+    public int IdCondicaoJogo { get; set; }
+    public List<int> IdsGeneros { get; set; } = [];
+    public bool Ativo { get; set; }
 }
