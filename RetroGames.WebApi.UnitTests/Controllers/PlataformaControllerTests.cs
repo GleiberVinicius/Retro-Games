@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Moq;
 using RetroGames.Model.Model;
 using RetroGames.Services.Interfaces;
@@ -11,6 +12,14 @@ namespace RetroGames.WebApi.UnitTests.Controllers;
 
 public sealed class PlataformaControllerTests
 {
+    [Fact]
+    public void RotasDeGravacao_NaoDevemExigirLoginNestaEtapa()
+    {
+        Assert.DoesNotContain(typeof(PlataformaController).GetMethod(nameof(PlataformaController.Inserir))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute);
+        Assert.DoesNotContain(typeof(PlataformaController).GetMethod(nameof(PlataformaController.Alterar))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute);
+        Assert.DoesNotContain(typeof(PlataformaController).GetMethod(nameof(PlataformaController.Excluir))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute);
+    }
+
     [Fact]
     public async Task Inserir_DeveRetornar201ComIdNaRotaELocacaoDoRecurso()
     {
