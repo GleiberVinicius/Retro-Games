@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using RetroGames.Services.Interfaces;
 using RetroGames.WebApi.ApiModels.ApiModels;
 namespace RetroGames.WebApi.Controllers;
+[ApiController]
 [Route("api/[controller]")]
 public sealed class AutenticacaoController(IAutenticacaoService servico,IAntiforgery antiforgery):ControllerBase
 {

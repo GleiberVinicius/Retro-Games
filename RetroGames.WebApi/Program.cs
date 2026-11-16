@@ -18,7 +18,8 @@ construtor.Services.AddRepositorios(connectionString);
 construtor.Services.AddServicosDeNegocio();
 construtor.Services.AddValidatorsFromAssemblyContaining<PlataformaEntradaValidator>();
 construtor.Services.AddScoped<ValidacaoFluentValidationFilter>();
-construtor.Services.AddControllersWithViews(opcoes => { opcoes.Filters.AddService<ValidacaoFluentValidationFilter>(); opcoes.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute()); });
+construtor.Services.AddControllersWithViews(opcoes => { opcoes.Filters.AddService<ValidacaoFluentValidationFilter>(); opcoes.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute()); })
+    .ConfigureApiBehaviorOptions(opcoes => opcoes.InvalidModelStateResponseFactory = contexto => ValidacaoFluentValidationFilter.CriarRespostaModelState(contexto.ModelState));
 construtor.Services.AddAntiforgery(opcoes => { opcoes.HeaderName = "X-CSRF-TOKEN"; opcoes.Cookie.Name = "RETRO-CSRF"; opcoes.Cookie.HttpOnly = true; opcoes.Cookie.SameSite = SameSiteMode.Strict; opcoes.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; });
 construtor.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(opcoes =>
 {

@@ -5,6 +5,7 @@ using RetroGames.Services.Interfaces;
 using RetroGames.WebApi.ApiModels.ApiModels;
 using RetroGames.WebApi.Mapeadores;
 namespace RetroGames.WebApi.Controllers;
+[ApiController]
 [Route("api/[controller]")]
 public sealed class PlataformaController(IPlataformaService servico) : ControllerBase
 {

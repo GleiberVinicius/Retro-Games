@@ -1,6 +1,8 @@
+using System.Text.Json;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using RetroGames.WebApi.ApiModels.ApiModels;
 namespace RetroGames.WebApi.Filters;
 public sealed class ValidacaoFluentValidationFilter(IServiceProvider servicos) : IAsyncActionFilter
@@ -9,8 +11,7 @@ public sealed class ValidacaoFluentValidationFilter(IServiceProvider servicos) :
     {
         if(!contexto.ModelState.IsValid)
         {
-            var errosModelo=contexto.ModelState.Where(x=>x.Value?.Errors.Count>0).ToDictionary(x=>char.ToLowerInvariant(x.Key[0])+x.Key[1..],x=>x.Value!.Errors.Select(e=>string.IsNullOrWhiteSpace(e.ErrorMessage)?"Valor inválido.":e.ErrorMessage).ToArray());
-            contexto.Result=new BadRequestObjectResult(new EnvelopeResposta<object>(ResponseCodes.MODEL_STATE_INVALIDO.Code,errosModelo,ResponseCodes.MODEL_STATE_INVALIDO.DefaultMessage));return;
+            contexto.Result=CriarRespostaModelState(contexto.ModelState);return;
         }
         foreach(var parametro in contexto.ActionDescriptor.Parameters)
         {
@@ -33,4 +34,32 @@ public sealed class ValidacaoFluentValidationFilter(IServiceProvider servicos) :
         }
         await proximo();
     }
+
+    public static IActionResult CriarRespostaModelState(ModelStateDictionary modelState)
+    {
+        var erros=modelState.Values.SelectMany(valor=>valor?.Errors??[]).ToArray();
+        if(erros.Any(erro=>ContemExcecaoJson(erro.Exception)))
+            return new BadRequestObjectResult(EnvelopeResposta<object>.Erro(ResponseCodes.MODEL_STATE_INVALIDO.Code,ResponseCodes.MODEL_STATE_INVALIDO.DefaultMessage));
+
+        if(erros.Any(erro=>erro.ErrorMessage.Contains("request body is required",StringComparison.OrdinalIgnoreCase)
+            || erro.ErrorMessage.Contains("corpo da requisição é obrigatório",StringComparison.OrdinalIgnoreCase)))
+            return new BadRequestObjectResult(EnvelopeResposta<object>.Erro(ResponseCodes.MODEL_NULL.Code,ResponseCodes.MODEL_NULL.DefaultMessage));
+
+        var errosModelo=modelState.Where(item=>item.Value?.Errors.Count>0)
+            .ToDictionary(item=>NomeCampo(item.Key),item=>item.Value!.Errors
+                .Select(erro=>string.IsNullOrWhiteSpace(erro.ErrorMessage)?"Valor inválido.":erro.ErrorMessage).ToArray());
+        return new BadRequestObjectResult(new EnvelopeResposta<object>(ResponseCodes.MODEL_STATE_INVALIDO.Code,errosModelo,ResponseCodes.MODEL_STATE_INVALIDO.DefaultMessage));
+    }
+
+    private static bool ContemExcecaoJson(Exception? excecao)
+    {
+        while(excecao is not null)
+        {
+            if(excecao is JsonException)return true;
+            excecao=excecao.InnerException;
+        }
+        return false;
+    }
+
+    private static string NomeCampo(string nome)=>string.IsNullOrEmpty(nome)?nome:char.ToLowerInvariant(nome[0])+nome[1..];
 }

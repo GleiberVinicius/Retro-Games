@@ -5,6 +5,7 @@ using RetroGames.WebApi.Mapeadores;
 
 namespace RetroGames.WebApi.Controllers;
 
+[ApiController]
 [Route("api/[controller]")]
 public sealed class CondicaoJogoController(ICondicaoJogoService servico) : ControllerBase
 {
