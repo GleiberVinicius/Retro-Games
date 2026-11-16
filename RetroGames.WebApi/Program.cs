@@ -16,7 +16,7 @@ if (string.IsNullOrWhiteSpace(connectionString)) throw new InvalidOperationExcep
 
 construtor.Services.AddRepositorios(connectionString);
 construtor.Services.AddServicosDeNegocio();
-construtor.Services.AddValidatorsFromAssemblyContaining<PlataformaEntradaValidator>();
+construtor.Services.AddValidatorsFromAssemblyContaining<InserirPlataformaRequestValidator>();
 construtor.Services.AddScoped<ValidacaoFluentValidationFilter>();
 construtor.Services.AddControllersWithViews(opcoes => { opcoes.Filters.AddService<ValidacaoFluentValidationFilter>(); opcoes.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute()); })
     .ConfigureApiBehaviorOptions(opcoes => opcoes.InvalidModelStateResponseFactory = contexto => ValidacaoFluentValidationFilter.CriarRespostaModelState(contexto.ModelState));
