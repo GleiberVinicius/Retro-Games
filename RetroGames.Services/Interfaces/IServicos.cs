@@ -6,3 +6,4 @@ public interface IJogoService { Task<PaginaServiceModel<JogoDetalheServiceModel>
 public interface IGeneroService { Task<IReadOnlyList<Genero>> ListarAsync(CancellationToken ct=default); }
 public interface ICondicaoJogoService { Task<IReadOnlyList<CondicaoJogo>> ListarAsync(CancellationToken ct=default); }
 public interface IAutenticacaoService { Task InicializarAdministradorAsync(string nome,string email,string senha,CancellationToken ct=default); Task<Usuario> AutenticarAsync(string email,string senha,CancellationToken ct=default); Task<string> ObterPerfilAsync(int idPerfil,CancellationToken ct=default); }
+public interface IUsuarioAtualService { int? Id { get; } string? Nome { get; } string? Email { get; } string? Perfil { get; } bool EhAdministrador { get; } }

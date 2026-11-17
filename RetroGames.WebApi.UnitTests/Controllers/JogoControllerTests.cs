@@ -13,11 +13,11 @@ namespace RetroGames.WebApi.UnitTests.Controllers;
 public sealed class JogoControllerTests
 {
     [Fact]
-    public void RotasDeGravacao_NaoDevemExigirLoginNestaEtapa()
+    public void RotasDeGravacao_ExigemPoliticaDeAdministrador()
     {
-        Assert.DoesNotContain(typeof(JogoController).GetMethod(nameof(JogoController.Inserir))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute);
-        Assert.DoesNotContain(typeof(JogoController).GetMethod(nameof(JogoController.Alterar))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute);
-        Assert.DoesNotContain(typeof(JogoController).GetMethod(nameof(JogoController.Excluir))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute);
+        Assert.Contains(typeof(JogoController).GetMethod(nameof(JogoController.Inserir))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute { Policy: "Politicas.Administrador" });
+        Assert.Contains(typeof(JogoController).GetMethod(nameof(JogoController.Alterar))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute { Policy: "Politicas.Administrador" });
+        Assert.Contains(typeof(JogoController).GetMethod(nameof(JogoController.Excluir))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute { Policy: "Politicas.Administrador" });
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public sealed class JogoControllerTests
         var servico = new Mock<IJogoService>();
         servico.Setup(x => x.InserirAsync(It.IsAny<Jogo>(), It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(CriarDetalhe());
-        var controller = new JogoController(servico.Object);
+        var controller = new JogoController(servico.Object, new Mock<IUsuarioAtualService>().Object);
         var modelo = new InserirJogoRequestApiModel
         {
             Nome = "Sonic", AnoLancamento = 1991, Preco = 45.50m, Estoque = 3,
@@ -49,7 +49,7 @@ public sealed class JogoControllerTests
         var servico = new Mock<IJogoService>();
         servico.Setup(x => x.AtualizarAsync(It.IsAny<Jogo>(), It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
-        var controller = new JogoController(servico.Object);
+        var controller = new JogoController(servico.Object, new Mock<IUsuarioAtualService>().Object);
         var modelo = new AlterarJogoRequestApiModel
         {
             Nome = "Sonic", AnoLancamento = 1991, Preco = 45.50m, Estoque = 3,
@@ -68,7 +68,7 @@ public sealed class JogoControllerTests
     {
         var servico = new Mock<IJogoService>();
         servico.Setup(x => x.DesativarAsync(12, It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-        var controller = new JogoController(servico.Object);
+        var controller = new JogoController(servico.Object, new Mock<IUsuarioAtualService>().Object);
 
         var resultado = Assert.IsType<NoContentResult>(await controller.Excluir(12, CancellationToken.None));
 

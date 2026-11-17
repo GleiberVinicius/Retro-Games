@@ -13,11 +13,11 @@ namespace RetroGames.WebApi.UnitTests.Controllers;
 public sealed class PlataformaControllerTests
 {
     [Fact]
-    public void RotasDeGravacao_NaoDevemExigirLoginNestaEtapa()
+    public void RotasDeGravacao_ExigemPoliticaDeAdministrador()
     {
-        Assert.DoesNotContain(typeof(PlataformaController).GetMethod(nameof(PlataformaController.Inserir))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute);
-        Assert.DoesNotContain(typeof(PlataformaController).GetMethod(nameof(PlataformaController.Alterar))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute);
-        Assert.DoesNotContain(typeof(PlataformaController).GetMethod(nameof(PlataformaController.Excluir))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute);
+        Assert.Contains(typeof(PlataformaController).GetMethod(nameof(PlataformaController.Inserir))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute { Policy: "Politicas.Administrador" });
+        Assert.Contains(typeof(PlataformaController).GetMethod(nameof(PlataformaController.Alterar))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute { Policy: "Politicas.Administrador" });
+        Assert.Contains(typeof(PlataformaController).GetMethod(nameof(PlataformaController.Excluir))!.GetCustomAttributes(true), atributo => atributo is AuthorizeAttribute { Policy: "Politicas.Administrador" });
     }
 
     [Fact]

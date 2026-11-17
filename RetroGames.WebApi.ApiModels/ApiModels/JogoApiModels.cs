@@ -7,6 +7,7 @@ public sealed class ListarJogoRequestApiModel
     public int? IdGenero { get; set; }
     public int Pagina { get; set; } = 1;
     public int TamanhoPagina { get; set; } = 12;
+    public bool IncluirInativos { get; set; }
 }
 
 public sealed record ListarJogoResponseApiModel(

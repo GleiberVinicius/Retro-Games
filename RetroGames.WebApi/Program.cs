@@ -16,6 +16,8 @@ if (string.IsNullOrWhiteSpace(connectionString)) throw new InvalidOperationExcep
 
 construtor.Services.AddRepositorios(connectionString);
 construtor.Services.AddServicosDeNegocio();
+construtor.Services.AddHttpContextAccessor();
+construtor.Services.AddScoped<RetroGames.Services.Interfaces.IUsuarioAtualService, RetroGames.WebApi.Servicos.UsuarioAtualService>();
 construtor.Services.AddValidatorsFromAssemblyContaining<InserirPlataformaRequestValidator>();
 construtor.Services.AddScoped<ValidacaoFluentValidationFilter>();
 construtor.Services.AddControllersWithViews(opcoes => { opcoes.Filters.AddService<ValidacaoFluentValidationFilter>(); opcoes.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute()); })
@@ -32,7 +34,7 @@ construtor.Services.AddAuthorization(opcoes =>
 {
     opcoes.AddPolicy("Politicas.UsuarioLogado", politica => politica.RequireAuthenticatedUser());
     opcoes.AddPolicy("Politicas.Administrador", politica => politica.RequireAuthenticatedUser().RequireRole("Administrador"));
-    opcoes.FallbackPolicy = opcoes.GetPolicy("Politicas.UsuarioLogado");
+    opcoes.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 });
 construtor.Services.AddExceptionHandler<GlobalExceptionHandler>();
 construtor.Services.AddProblemDetails();
