@@ -28,7 +28,12 @@ construtor.Services.AddAuthentication(CookieAuthenticationDefaults.Authenticatio
     opcoes.Events.OnRedirectToLogin = contexto => { contexto.Response.StatusCode = StatusCodes.Status401Unauthorized; return Task.CompletedTask; };
     opcoes.Events.OnRedirectToAccessDenied = contexto => { contexto.Response.StatusCode = StatusCodes.Status403Forbidden; return Task.CompletedTask; };
 });
-construtor.Services.AddAuthorization(opcoes => opcoes.AddPolicy("SomenteAdministrador", politica => politica.RequireAuthenticatedUser().RequireRole("Administrador")));
+construtor.Services.AddAuthorization(opcoes =>
+{
+    opcoes.AddPolicy("Politicas.UsuarioLogado", politica => politica.RequireAuthenticatedUser());
+    opcoes.AddPolicy("Politicas.Administrador", politica => politica.RequireAuthenticatedUser().RequireRole("Administrador"));
+    opcoes.FallbackPolicy = opcoes.GetPolicy("Politicas.UsuarioLogado");
+});
 construtor.Services.AddExceptionHandler<GlobalExceptionHandler>();
 construtor.Services.AddProblemDetails();
 construtor.Services.AddEndpointsApiExplorer();
