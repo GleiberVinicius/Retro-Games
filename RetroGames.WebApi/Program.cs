@@ -23,7 +23,7 @@ construtor.Services.AddControllersWithViews(opcoes => { opcoes.Filters.AddServic
 construtor.Services.AddAntiforgery(opcoes => { opcoes.HeaderName = "X-CSRF-TOKEN"; opcoes.Cookie.Name = "RETRO-CSRF"; opcoes.Cookie.HttpOnly = true; opcoes.Cookie.SameSite = SameSiteMode.Strict; opcoes.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; });
 construtor.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(opcoes =>
 {
-    opcoes.Cookie.Name = "RETRO-SESSAO"; opcoes.Cookie.HttpOnly = true; opcoes.Cookie.SameSite = SameSiteMode.Strict; opcoes.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    opcoes.Cookie.Name = "retrogames.sessao"; opcoes.Cookie.HttpOnly = true; opcoes.Cookie.SameSite = SameSiteMode.Strict; opcoes.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     opcoes.ExpireTimeSpan = TimeSpan.FromHours(2); opcoes.SlidingExpiration = true;
     opcoes.Events.OnRedirectToLogin = contexto => { contexto.Response.StatusCode = StatusCodes.Status401Unauthorized; return Task.CompletedTask; };
     opcoes.Events.OnRedirectToAccessDenied = contexto => { contexto.Response.StatusCode = StatusCodes.Status403Forbidden; return Task.CompletedTask; };
