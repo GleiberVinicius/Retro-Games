@@ -1,4 +1,5 @@
 using MySqlConnector;
+using RetroGames.Model.Constantes;
 using RetroGames.Model.Model;
 using RetroGames.Repository.Conexao;
 using RetroGames.Repository.Interfaces;
@@ -320,6 +321,15 @@ internal sealed class JogoGeneroRepository(RepositoryConfig config)
 internal sealed class UsuarioRepository(RepositoryConfig config)
     : RepositoryBase(config), IUsuarioRepository
 {
+    public async Task<Usuario?> ObterPorIdAsync(int id, CancellationToken ct = default)
+    {
+        await using var cn = await AbrirConexaoAsync(ct);
+        await using var cmd = CriarComando(cn, "SELECT co_seq_usuario,no_usuario,ds_email,ds_senha_hash,st_ativo,dt_cadastro,co_perfil FROM tb_usuario WHERE co_seq_usuario=@id");
+        AdicionarParametro(cmd, "@id", id);
+        await using var rd = await cmd.ExecuteReaderAsync(ct);
+        return await rd.ReadAsync(ct) ? Mapear(rd) : null;
+    }
+
     public async Task InserirAsync(Usuario usuario, CancellationToken ct = default)
     {
         await using var cn = await AbrirConexaoAsync(ct);
@@ -337,19 +347,27 @@ internal sealed class UsuarioRepository(RepositoryConfig config)
         await using var cmd = CriarComando(cn, "SELECT co_seq_usuario,no_usuario,ds_email,ds_senha_hash,st_ativo,dt_cadastro,co_perfil FROM tb_usuario WHERE ds_email=@email");
         AdicionarParametro(cmd, "@email", email);
         await using var rd = await cmd.ExecuteReaderAsync(ct);
-        return await rd.ReadAsync(ct)
-            ? new Usuario
-            {
-                Id = rd.GetInt32(0),
-                Nome = rd.GetString(1),
-                Email = rd.GetString(2),
-                SenhaHash = rd.GetString(3),
-                Ativo = rd.GetBoolean(4),
-                DataCadastro = rd.GetDateTime(5),
-                IdPerfil = rd.GetInt32(6),
-            }
-            : null;
+        return await rd.ReadAsync(ct) ? Mapear(rd) : null;
     }
+
+    public async Task<bool> ExisteAdministradorAsync(CancellationToken ct = default)
+    {
+        await using var cn = await AbrirConexaoAsync(ct);
+        await using var cmd = CriarComando(cn, "SELECT COUNT(*) FROM tb_usuario WHERE co_perfil=@perfil");
+        AdicionarParametro(cmd, "@perfil", PerfilIds.Administrador);
+        return Convert.ToInt32(await cmd.ExecuteScalarAsync(ct)) > 0;
+    }
+
+    private static Usuario Mapear(MySqlDataReader rd) => new()
+    {
+        Id = rd.GetInt32(0),
+        Nome = rd.GetString(1),
+        Email = rd.GetString(2),
+        SenhaHash = rd.GetString(3),
+        Ativo = rd.GetBoolean(4),
+        DataCadastro = DateTime.SpecifyKind(rd.GetDateTime(5), DateTimeKind.Utc),
+        IdPerfil = rd.GetInt32(6),
+    };
 }
 
 internal sealed class PerfilRepository(RepositoryConfig config)

@@ -38,5 +38,11 @@ public interface IJogoGeneroRepository
     Task InserirAsync(int idJogo, IReadOnlyCollection<int> idsGeneros, CancellationToken ct = default);
     Task RemoverPorJogoAsync(int idJogo, CancellationToken ct = default);
 }
-public interface IUsuarioRepository { Task<Usuario?> ObterPorEmailAsync(string email, CancellationToken ct = default); Task InserirAsync(Usuario usuario, CancellationToken ct = default); }
+public interface IUsuarioRepository
+{
+    Task<Usuario?> ObterPorIdAsync(int id, CancellationToken ct = default);
+    Task<Usuario?> ObterPorEmailAsync(string email, CancellationToken ct = default);
+    Task<bool> ExisteAdministradorAsync(CancellationToken ct = default);
+    Task InserirAsync(Usuario usuario, CancellationToken ct = default);
+}
 public interface IPerfilRepository { Task<string?> ObterDescricaoAsync(int id, CancellationToken ct = default); }
