@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { condicaoJogoApi, generoApi, jogoApi, plataformaApi } from '../api/servicos';
 import { obterErrosDosCampos, obterMensagemErro } from '../api/erros';
 import { Carregando } from '../components/MensagensEstado';

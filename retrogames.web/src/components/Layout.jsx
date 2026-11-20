@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet, useNavigate } from 'react-router';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAutenticacao } from '../hooks/useAutenticacao';
 export default function Layout() {
   const { usuario, ehAdministrador, sair } = useAutenticacao(); const navegar = useNavigate();

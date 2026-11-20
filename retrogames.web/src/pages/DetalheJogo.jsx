@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useParams } from 'react-router-dom';
 import { jogoApi } from '../api/servicos';
 import { obterMensagemErro } from '../api/erros';
 import { formatarPreco, formatarDataHora } from '../lib/formato';

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router-dom';
 import { jogoApi, plataformaApi, generoApi } from '../api/servicos';
 import { obterMensagemErro } from '../api/erros';
 import CardJogo from '../components/CardJogo';

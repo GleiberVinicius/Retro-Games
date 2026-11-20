@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { jogoApi } from '../api/servicos';
 import { obterMensagemErro } from '../api/erros';
 import { Carregando, EstadoVazio, MensagemErro } from '../components/MensagensEstado';

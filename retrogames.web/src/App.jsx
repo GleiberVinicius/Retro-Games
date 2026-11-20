@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router';
+import { Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
 import RotaProtegida from './components/RotaProtegida';
 import Catalogo from './pages/Catalogo';
