@@ -17,7 +17,7 @@ export const generoApi = { listar: () => requisitar({ method: 'get', url: '/Gene
 export const condicaoJogoApi = { listar: () => requisitar({ method: 'get', url: '/CondicaoJogo' }) };
 export const jogoApi = {
   listar: (params) => requisitar({ method: 'get', url: '/Jogo', params }),
-  obter: (id) => requisitar({ method: 'get', url: `/Jogo/${id}` }),
+  buscarPorId: (id) => requisitar({ method: 'get', url: `/Jogo/${id}` }),
   inserir: (dados) => requisitar({ method: 'post', url: '/Jogo', data: dados }),
   atualizar: (id, dados) => requisitar({ method: 'put', url: `/Jogo/${id}`, data: dados }),
   excluir: (id) => requisitar({ method: 'delete', url: `/Jogo/${id}` }),
