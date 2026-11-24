@@ -39,7 +39,7 @@ construtor.Services.AddAuthorization(opcoes =>
 construtor.Services.AddExceptionHandler<GlobalExceptionHandler>();
 construtor.Services.AddProblemDetails();
 construtor.Services.AddEndpointsApiExplorer();
-construtor.Services.AddSwaggerGen();
+construtor.Services.AddSwaggerGen(opcoes => opcoes.OperationFilter<FiltroCabecalhoCsrf>());
 
 var app = construtor.Build();
 using (var escopoInicial = app.Services.CreateScope())
