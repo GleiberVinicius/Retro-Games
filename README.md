@@ -54,6 +54,16 @@ npm run dev
 
 O Vite atende em `http://localhost:5173` e encaminha `/api` para a API local.
 
+## Sessão e rotas administrativas
+
+As rotas `/admin/jogos`, `/admin/jogos/novo`, `/admin/jogos/:id/editar` e `/admin/plataformas` ficam dentro de `RotaProtegida` e exigem o perfil Administrador. Se um visitante abrir uma delas, o front-end envia para `/login?voltarPara=...`; depois do login, retorna ao endereço solicitado. Ao recarregar uma rota protegida, o provider consulta `/api/Autenticacao/eu` usando o cookie de sessão.
+
+O botão **Sair** encerra a sessão na API e retorna ao catálogo. Sem sessão, as rotas administrativas não aparecem no menu e os endpoints protegidos respondem HTTP 401.
+
+Para chamadas de escrita no Swagger, execute primeiro `GET /api/Autenticacao/csrf`. Copie `data.requestToken` para o header `X-CSRF-TOKEN` da chamada `POST`, `PUT` ou `DELETE`. A validação CSRF continua ativa também no login.
+
+Erros de validação usam `responseCode: 3`; `obterErrosDosCampos` extrai as mensagens por campo para os formulários. Os demais erros são exibidos como mensagem geral.
+
 ## Verificação
 
 Com o SDK .NET 10 instalado, execute `dotnet test` na raiz. Para validar o front-end, execute `npm run build` dentro de `retrogames.web`.
