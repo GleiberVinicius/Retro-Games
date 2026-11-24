@@ -44,7 +44,7 @@ public sealed class JogoService(IRepositorioSet repositorios) : IJogoService
     public async Task DesativarAsync(int id,CancellationToken ct=default){if(await repositorios.Jogos.ObterAsync(id,true,ct)is null)throw BusinessErrors.JogoNaoEncontrado();await repositorios.Jogos.DesativarAsync(id,ct);}
     private async Task ValidarReferenciasAsync(Jogo jogo,IReadOnlyCollection<int> ids,CancellationToken ct)
     {
-        if(await repositorios.Plataformas.ObterAsync(jogo.IdPlataforma,ct)is null)throw BusinessErrors.PlataformaInexistente();
+        if(await repositorios.Plataformas.ObterAsync(jogo.IdPlataforma,ct)is null)throw BusinessErrors.PlataformaNaoEncontrada();
         if(!await repositorios.Condicoes.ExisteAsync(jogo.IdCondicaoJogo,ct))throw BusinessErrors.CondicaoInexistente();
         if(ids.Count==0|| (await repositorios.Generos.ListarPorIdsAsync(ids.Distinct().ToArray(),ct)).Count!=ids.Distinct().Count())throw BusinessErrors.GeneroInexistente();
     }
