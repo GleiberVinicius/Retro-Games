@@ -11,7 +11,9 @@ api.interceptors.request.use((config) => {
 });
 api.interceptors.response.use((res) => res, async (erro) => {
   const config = erro.config;
-  if (erro.response?.status === 401) window.dispatchEvent(new Event('sessao:expirada'));
+  const rota = config?.url?.split('?')[0]?.toLowerCase();
+  const rotaDeAutenticacao = ['/autenticacao/eu', '/autenticacao/login'].includes(rota);
+  if (erro.response?.status === 401 && !rotaDeAutenticacao) window.dispatchEvent(new Event('sessao:expirada'));
   if (erro.response?.status === 400 && erro.response?.headers?.['x-csrf-invalido'] === 'true' && config && ['post', 'put', 'delete'].includes(config.method?.toLowerCase()) && !config._tentouRenovarCsrf) {
     config._tentouRenovarCsrf = true;
     try { await api.get('/Autenticacao/csrf'); return api(config); } catch { /* preserva o erro original */ }
