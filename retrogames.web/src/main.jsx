@@ -8,5 +8,5 @@ import { AutenticacaoProvider } from './contexts/AutenticacaoProvider';
 import App from './App';
 
 createRoot(document.getElementById('root')).render(
-  <React.StrictMode><BrowserRouter><AutenticacaoProvider><App /></AutenticacaoProvider></BrowserRouter></React.StrictMode>,
+  <React.StrictMode><BrowserRouter basename={import.meta.env.BASE_URL}><AutenticacaoProvider><App /></AutenticacaoProvider></BrowserRouter></React.StrictMode>,
 );
