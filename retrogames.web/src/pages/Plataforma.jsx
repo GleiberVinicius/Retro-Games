@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { plataformaApi } from '../api/servicos';
 import { obterErrosDosCampos, obterMensagemErro } from '../api/erros';
 import { Carregando, EstadoVazio, MensagemErro } from '../components/MensagensEstado';
@@ -11,6 +11,7 @@ export default function Plataforma() {
   const [idEdicao, setIdEdicao] = useState(null);
   const [erro, setErro] = useState('');
   const [errosCampo, setErrosCampo] = useState({});
+  const formularioRef = useRef(null);
 
   const carregar = useCallback(async () => {
     try {
@@ -59,6 +60,10 @@ export default function Plataforma() {
     });
     setErro('');
     setErrosCampo({});
+    // No celular o formulário fica acima da lista: leva a tela até ele e coloca o foco no nome.
+    const reduzirMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    formularioRef.current?.scrollIntoView({ behavior: reduzirMovimento ? 'auto' : 'smooth', block: 'start' });
+    formularioRef.current?.querySelector('#plataforma-nome')?.focus({ preventScroll: true });
   }
 
   async function excluir(id) {
@@ -77,9 +82,16 @@ export default function Plataforma() {
   }
 
   function mensagensDoCampo(campo) {
-    return errosCampo[campo]?.map((mensagem) => (
-      <div className="invalid-feedback" key={mensagem}>{mensagem}</div>
+    return errosCampo[campo]?.map((mensagem, indice) => (
+      <div className="invalid-feedback" id={indice === 0 ? `plataforma-erro-${campo}` : undefined} key={mensagem}>{mensagem}</div>
     ));
+  }
+
+  function ligacao(campo) {
+    return {
+      'aria-invalid': errosCampo[campo] ? 'true' : undefined,
+      'aria-describedby': errosCampo[campo] ? `plataforma-erro-${campo}` : undefined,
+    };
   }
 
   function cancelarEdicao() {
@@ -95,92 +107,104 @@ export default function Plataforma() {
       <p className="text-secondary">Cadastre e mantenha os consoles disponíveis.</p>
       {erro && <MensagemErro mensagem={erro} aoTentarNovamente={carregar} />}
 
-      <form className="card border-0 shadow-sm mb-4" onSubmit={salvar} noValidate>
-        <div className="card-body">
-          <h2 className="h5">{idEdicao ? 'Editar plataforma' : 'Nova plataforma'}</h2>
-          <div className="row g-2">
-            <div className="col-md-5">
+      <form className="card rg-painel rg-formulario mb-4" onSubmit={salvar} noValidate ref={formularioRef}>
+        <div className="card-body p-3 p-md-4">
+          <h2 className="h5 mb-3">{idEdicao ? 'Editar plataforma' : 'Nova plataforma'}</h2>
+          <div className="row g-3">
+            <div className="col-12 col-md-5">
+              <label className="form-label" htmlFor="plataforma-nome">Nome da plataforma</label>
               <input
+                id="plataforma-nome"
                 className={`form-control${classeInvalida('nome')}`}
-                aria-label="Nome da plataforma"
                 placeholder="Nome"
                 required
                 maxLength="80"
                 value={modelo.nome}
                 onChange={(evento) => alterar('nome', evento.target.value)}
+                {...ligacao('nome')}
               />
               {mensagensDoCampo('nome')}
             </div>
-            <div className="col-md-4">
+            <div className="col-12 col-sm-8 col-md-4">
+              <label className="form-label" htmlFor="plataforma-fabricante">Fabricante</label>
               <input
+                id="plataforma-fabricante"
                 className={`form-control${classeInvalida('fabricante')}`}
-                aria-label="Fabricante"
                 placeholder="Fabricante"
                 required
                 maxLength="80"
                 value={modelo.fabricante}
                 onChange={(evento) => alterar('fabricante', evento.target.value)}
+                {...ligacao('fabricante')}
               />
               {mensagensDoCampo('fabricante')}
             </div>
-            <div className="col-md-2">
+            <div className="col-12 col-sm-4 col-md-3">
+              <label className="form-label" htmlFor="plataforma-ano">Ano de lançamento</label>
               <input
+                id="plataforma-ano"
                 className={`form-control${classeInvalida('anoLancamento')}`}
-                aria-label="Ano de lançamento"
                 type="number"
+                inputMode="numeric"
                 min="1970"
                 max="2100"
                 required
                 value={modelo.anoLancamento}
                 onChange={(evento) => alterar('anoLancamento', Number(evento.target.value))}
+                {...ligacao('anoLancamento')}
               />
               {mensagensDoCampo('anoLancamento')}
             </div>
-            <div className="col-md-1 d-grid">
-              <button className="btn btn-dark">Salvar</button>
-            </div>
           </div>
         </div>
-        {idEdicao && (
-          <div className="card-footer bg-white">
-            <button type="button" className="btn btn-sm btn-link" onClick={cancelarEdicao}>
+        <div className="card-footer p-3 p-md-4 d-grid d-sm-flex justify-content-sm-end gap-2">
+          {idEdicao && (
+            <button type="button" className="btn btn-outline-dark" onClick={cancelarEdicao}>
               Cancelar edição
             </button>
-          </div>
-        )}
+          )}
+          <button className="btn btn-retro">Salvar</button>
+        </div>
       </form>
 
       {!lista && !erro ? (
         <Carregando />
       ) : lista?.length ? (
-        <div className="list-group">
-          {lista.map((plataforma) => (
-            <div
-              className="list-group-item d-flex align-items-center justify-content-between"
-              key={plataforma.id}
-            >
-              <div>
-                <strong>{plataforma.nome}</strong>
-                <div className="small text-secondary">
-                  {plataforma.fabricante} · {plataforma.anoLancamento}
+        <div className="rg-painel rg-lista-admin overflow-hidden">
+          <ul className="list-unstyled mb-0">
+            {lista.map((plataforma) => (
+              <li
+                className={`rg-item-admin d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3${idEdicao === plataforma.id ? ' rg-item-em-edicao' : ''}`}
+                key={plataforma.id}
+              >
+                <div>
+                  <strong>{plataforma.nome}</strong>
+                  {idEdicao === plataforma.id && <span className="rg-situacao rg-situacao-estoque ms-2">Em edição</span>}
+                  <div className="small text-secondary">
+                    {plataforma.fabricante} · {plataforma.anoLancamento}
+                  </div>
                 </div>
-              </div>
-              <div>
-                <button
-                  className="btn btn-sm btn-outline-dark me-2"
-                  onClick={() => editar(plataforma)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="btn btn-sm btn-outline-danger"
-                  onClick={() => excluir(plataforma.id)}
-                >
-                  Excluir
-                </button>
-              </div>
-            </div>
-          ))}
+                <div className="rg-acoes">
+                  <button
+                    className="btn btn-sm btn-outline-dark"
+                    type="button"
+                    aria-label={`Editar ${plataforma.nome}`}
+                    onClick={() => editar(plataforma)}
+                  >
+                    Editar
+                  </button>
+                  <button
+                    className="btn btn-sm btn-outline-danger"
+                    type="button"
+                    aria-label={`Excluir ${plataforma.nome}`}
+                    onClick={() => excluir(plataforma.id)}
+                  >
+                    Excluir
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       ) : !erro ? (
         <EstadoVazio titulo="Nenhuma plataforma cadastrada">

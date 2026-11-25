@@ -2,10 +2,21 @@ import axios from 'axios';
 
 export const api = axios.create({ baseURL: '/api', withCredentials: true, headers: { 'Content-Type': 'application/json' } });
 function lerCookie(nome) { return document.cookie.split('; ').find((item) => item.startsWith(`${nome}=`))?.split('=').slice(1).join('='); }
-api.interceptors.request.use((config) => {
+let requisicaoCsrf;
+async function obterTokenCsrf() {
+  let token = lerCookie('XSRF-TOKEN');
+  if (!token) {
+    requisicaoCsrf ??= api.get('/Autenticacao/csrf');
+    try { await requisicaoCsrf; } finally { requisicaoCsrf = null; }
+    token = lerCookie('XSRF-TOKEN');
+  }
+  if (!token) throw new Error('Não foi possível obter o token de segurança da sessão.');
+  return token;
+}
+api.interceptors.request.use(async (config) => {
   if (['post', 'put', 'delete'].includes(config.method?.toLowerCase())) {
-    const token = lerCookie('XSRF-TOKEN');
-    if (token) config.headers['X-CSRF-TOKEN'] = decodeURIComponent(token);
+    const token = await obterTokenCsrf();
+    config.headers['X-CSRF-TOKEN'] = decodeURIComponent(token);
   }
   return config;
 });
